@@ -1,0 +1,566 @@
+{% load static%}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Shop Around</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css" media="all" />
+<!--[if lte IE 6]><link rel="stylesheet" href="{% static 'css/ie6.css' %}" type="text/css" media="all" /><![endif]-->
+<script src="{% static 'js/jquery-1.4.1.min.js'%}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.jcarousel.pack.js'%}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-func.js'%}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
+    <style>
+        *{
+            font-family: "B Mitra";
+        }
+                .hidden {
+            display: none;
+        }
+        .advanced-search {
+            margin-top: 20px;
+        }
+        .advanced-search select {
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        </style>
+        <script>
+        function toggleAdvancedSearch() {
+            var advancedSearch = document.getElementById('advanced-search');
+            if (advancedSearch.classList.contains('hidden')) {
+                advancedSearch.classList.remove('hidden');
+            } else {
+                advancedSearch.classList.add('hidden');
+            }
+        }
+    </script>
+</head>
+<body>
+<!-- Shell -->
+<div class="shell">
+  <!-- Header -->
+  <div id="header">
+    <h1 id="logo"><a href="#">shoparound</a></h1>
+    <!-- Cart -->
+    <!-- End Cart -->
+    <!-- Navigation -->
+    <div id="navigation" >
+      <ul>
+        <li><a href="#" >تماس با ما</a></li>
+        <li><a href="#">پشتیبانی</a></li>
+        <li><a href="#">حساب کاربری</a></li>
+        <li><a href="#">فروشگاه</a></li>
+        <li><a href="#"> خانه</a></li>
+      </ul>
+    </div>
+
+    <div id="cart"> <a href="#" class="cart-link">سبد خرید</a>
+      <div class="cl">&nbsp;</div>
+      <span>اقلام: <strong>4</strong></span> &nbsp;&nbsp; <span
+      >هزینه: <strong>۲۵۰۰۰۰</strong></span> </div>
+    <!-- End Navigation -->
+  </div>
+  <!-- End Header -->
+  <!-- Main -->
+{% load update_variable %}
+  <div id="main">
+    <div class="cl"></div>
+    <!-- Content -->
+     <div id="content">
+         <div style="padding-top:1px;padding-right: 5px; border:solid 1px #dedede; text-align: right; direction: rtl; color: black;">
+         {% if description_answer_llm %}
+            <p>
+                توضیحات: {{ description_answer_llm }}
+            </p>
+        {% endif %}
+         </div>
+         {% update_variable images images_cohere_rank as full_image %}
+         {% with full_image_2=full_image %}
+                  <div class="products">
+                    <div class="cl">&nbsp;</div>
+            {#            {% with images_cohere_rank_2 = images_cohere_rank %}#}
+                            {% if full_image %}
+                                <ul>
+                                    {% for image, text in full_image%}
+                                        {% if forloop.counter <= 9 %}
+                                            {% if forloop.counter == 3 or forloop.counter == 6 or forloop.counter == 9 %}
+                                            <li class="last">
+                                                <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" />
+                                                <div class="product-info">
+                                                      <div class="product-desc">
+                                                        <p style="text-align: right; direction: rtl" >{{ text }}</p>
+                                                          <button class="recommendation_button"  id="openPopup" onclick="showPopup({{ image }}, {{ text }})">اطلاعات بیشتر</button>
+                                                      </div>
+                                                </div>
+                                            </li>
+                                            {% else %}
+                                            <li>
+                                                <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" />
+                                                <div class="product-info">
+                                                      <div class="product-desc">
+                                                        <p >{{ text }}</p>
+                                                          <button class="recommendation_button"  id="openPopup" onclick="showPopup({{ image }}, {{ text }})">اطلاعات بیشتر</button>
+                                                      </div>
+                                                </div>
+                                            </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                    <div id="moreinfo" class="box">
+
+                                        <div>
+                                            <img src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="">
+                                        </div>
+                                        <div id="text_moreinfo">
+                                            <p id="title_fa">{{ title }}</p>
+                                            <p id="attributes">{{ attributes|linebreaks }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="cl">&nbsp;</div>
+                                    <div class="recommend_div" class="box">
+                                        <div class="recommendation_img" class="box">
+                                            <img src="{% static  'media/images/styles/casual.webp' %}" alt="">
+                                            <p>استایل راحتی پیشنهادی</p>
+                                        </div>
+                                            <div class="slider" >
+                                                <div id="slider-holder">
+                                                  <ul>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                  </ul>
+                                                </div>
+                                                <div id="slider-nav"> <a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a></div>
+                                              </div>
+
+                                    </div>
+
+                                    <div class="cl">&nbsp;</div>
+                                    <div class="recommend_div" class="box">
+                                        <div class="recommendation_img" class="box">
+                                            <img src="{% static  'media/images/styles/formal.webp' %}" alt="">
+                                            <p>استایل اداری پیشنهادی</p>
+                                        </div>
+                                            <div class="slider" >
+                                                <div id="slider-holder2">
+                                                  <ul>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                  </ul>
+                                                </div>
+                                                <div id="slider-nav2"> <a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a></div>
+                                              </div>
+
+                                    </div>
+                                    <div class="cl">&nbsp;</div>
+                                    <div class="recommend_div" class="box">
+                                        <div class="recommendation_img" class="box">
+                                            <img src="{% static  'media/images/styles/party.jpg' %}" alt="">
+                                            <p>استایل مجلسی پیشنهادی</p>
+                                        </div>
+                                            <div class="slider" >
+                                                <div id="slider-holder3">
+                                                  <ul>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                  </ul>
+                                                </div>
+                                                <div id="slider-nav3"> <a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a></div>
+                                              </div>
+
+                                    </div>
+                                <div class="cl">&nbsp;</div>
+                                    <div class="recommend_div" class="box">
+                                        <div class="recommendation_img" class="box">
+                                            <img src="{% static  'media/images/styles/sport.jpg' %}" alt="">
+                                            <p>استایل اسپرت پیشنهادی</p>
+                                        </div>
+                                            <div class="slider" >
+                                                <div id="slider-holder4">
+                                                  <ul>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                    <li><a href="#">
+                                                            <div class="recommend_caption">
+                                                                    <img  src="{% static 'media/images/'%}{{ idimage }}/pic1.jpg" alt="" />
+                                                                    <p>{{ title}}</p>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                        <a href="#"><img  src="{% static  'media/images/styles/casual.webp' %}" alt="" /></a>
+                                                    </li>
+                                                  </ul>
+                                                </div>
+                                                <div id="slider-nav4"> <a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a></div>
+                                              </div>
+
+                                    </div>
+
+                                <div class="cl">&nbsp;</div>
+                            {% endif %}
+
+
+                    <div class="cl">&nbsp;</div>
+                </div>
+              <!-- Products -->
+
+         {% endwith %}
+      <!-- End Products -->
+     </div>
+
+    <!-- End Content -->
+    <!-- Sidebar -->
+    <div id="sidebar" dir="rtl">
+      <!-- Search -->
+      <div class="box search">
+        <h2>جستجو<span></span></h2>
+        <div class="box-content">
+          <form action="" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+            <label>مشخصات تیشرت مورد نظر را وارد کنید...</label>
+            <input type="text" class="field" name="query" />
+            <label>دسته بندی</label>
+            <select class="field">
+              <option value="">-- انتخاب دسته --</option>
+              <option value="">تیشرت</option>
+              <option value="">شلوار</option>
+              <option value="">کیف</option>
+              <option value="">کفش</option>
+            </select>
+<!--            <div class="inline-field">-->
+<!--              <label>Price</label>-->
+<!--              <select class="field small-field">-->
+<!--                <option value="">$10</option>-->
+<!--              </select>-->
+<!--              <label>to:</label>-->
+<!--              <select class="field small-field">-->
+<!--                <option value="">$50</option>-->
+<!--              </select>-->
+<!--            </div>-->
+            <button type="submit" class="search-submit"  name="search" value="normal">جستجو</button>
+              <p> <a href="#" class="bul" onclick="toggleAdvancedSearch()">جستجوی پیشرفته</a><br />
+            <div id="advanced-search" class="hidden advanced-search">
+                <select class="field" name="skin_color">
+                    <option value="0">انتخاب رنگ پوست</option>
+                    <option value="روشن">روشن</option>
+                    <option value="گندمی">گندمی</option>
+                    <option value="تیره">تیره</option>
+                    <option value="برنزه">برنزه</option>
+                    <option value="سیاه">سیاه</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select class="field" name="eye_color">قهوه ای روشن، قهوه ای تیره، عسلی، سبز، خاکستری، مشکی
+                    <option value="0">انتخاب رنگ چشم</option>
+                    <option value="مشکی">مشکی</option>
+                    <option value="قهوه‌ای روشن"> قهوه‌ای روشن</option>
+                    <option value="قهوه ای تیره">قهوه ای تیره</option>
+                    <option value="عسلی">عسلی</option>
+                    <option value="سبز"> سبز</option>
+                    <option value="خاکستری">خاکستری</option>
+
+                    <!-- Add more options as needed -->
+                </select>
+                <select class="field" name="hair_color">
+                    <option value="0">انتخاب رنگ مو</option>
+                    <option value="مشکی">مشکی</option>
+                    <option value="قهوه ای روشن"> قهوه‌ای روشن</option>
+                    <option value="قهوه ای تیره">قهوه ای تیره</option>
+                    <option value="سفید">سفید</option>
+                    <option value="بلوند">بلوند</option>
+                    <option value="خرمایی">خرمایی</option>
+                    <option value="فانتزی">فانتزی</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select class="field" name="face_shape">
+                    <option value="0">انتخاب فرم صورت</option>
+                    <option value="گرد">گرد</option>
+                    <option value="بیضی">بیضی</option>
+                    <option value="مربع">مربع</option>
+                    <option value="قلبی">قلبی</option>
+                    <option value="مستطیلی">مستطیلی</option>
+                    <option value="لوزی">لوزی</option>
+                    <option value="مثلثی">مثلثی</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select class="field" name="body_shape">
+                    <option value="0">انتخاب نوع اندام</option>
+                    <option value="ساعت شنی">ساعت شنی</option>
+                    <option value="گلابی">گلابی</option>
+                    <option value="مستطیلی">مستطیلی</option>
+                    <option value="مثلثی">مثلثی</option>
+                    <option value="بلند">بلند</option>
+                    <option value="کوتاه">کوتاه</option>
+                    <option value="چاق">چاق</option>
+                    <option value="لاغر">لاغر</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <button type="submit" class="search-submit" name="search" value="advanced">جستجو</button>
+                <p>بارگذاری تصویر</p>
+                <input type="file" class="field" id="imageInput" name="image" accept="image/*" onchange="showimage()">
+                <br>
+                <img id="preview" src="#" alt="پیش‌نمایش تصویر" />
+                <div id="buttons">
+                    <input type="button" id="suggest_set" class="recommendation_button" onclick="showPopup_upload()" value="اطلاعات بیشتر">
+                    <button type="submit" id="search_similar" class="recommendation_button" name="search" value="user_image_similarsearch"> محصولات مشابه</button>
+                </div>
+                <div class="cl">&nbsp;</div>
+            </div>
+<!--            <p> <a href="#" class="bul">Advanced search</a><br />-->
+<!--              <a href="#" class="bul">Contact Customer Support</a> </p>-->
+          </form>
+        </div>
+      </div>
+      <!-- End Search -->
+      <!-- Categories -->
+{#      <div class="box categories">#}
+{#        <h2>Categories <span></span></h2>#}
+{#        <div class="box-content">#}
+{#          <ul>#}
+{#            <li><a href="#">Category 1</a></li>#}
+{#            <li><a href="#">Category 2</a></li>#}
+{#            <li><a href="#">Category 3</a></li>#}
+{#            <li><a href="#">Category 4</a></li>#}
+{#            <li><a href="#">Category 5</a></li>#}
+{#            <li><a href="#">Category 6</a></li>#}
+{#            <li><a href="#">Category 7</a></li>#}
+{#            <li><a href="#">Category 8</a></li>#}
+{#            <li><a href="#">Category 9</a></li>#}
+{#            <li><a href="#">Category 10</a></li>#}
+{#            <li><a href="#">Category 11</a></li>#}
+{#            <li><a href="#">Category 12</a></li>#}
+{#            <li class="last"><a href="#">Category 13</a></li>#}
+{#          </ul>#}
+{#        </div>#}
+{#      </div>#}
+      <!-- End Categories -->
+    </div>
+    <!-- End Sidebar -->
+    <div class="cl">&nbsp;</div>
+  </div>
+  <!-- End Main -->
+  <!-- Side Full -->
+  <div class="side-full">
+    <!-- More Products -->
+    <!--<div class="more-products">-->
+    <!--  <div class="more-products-holder">-->
+    <!--    <ul>-->
+    <!--      <li><a href="#"><img src="css/images/small1.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small2.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small3.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small4.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small5.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small6.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small7.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small1.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small2.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small3.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small4.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small5.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small6.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small7.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small1.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small2.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small3.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small4.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small5.jpg" alt="" /></a></li>-->
+    <!--      <li><a href="#"><img src="css/images/small6.jpg" alt="" /></a></li>-->
+    <!--      <li class="last"><a href="#"><img src="css/images/small7.jpg" alt="" /></a></li>-->
+    <!--    </ul>-->
+    <!--  </div>-->
+    <!--  <div class="more-nav"> <a href="#" class="prev">previous</a> <a href="#" class="next">next</a> </div>-->
+    <!--</div>-->
+    <!-- End More Products -->
+    <!-- Text Cols -->
+    <div class="cols">
+      <div class="cl">&nbsp;</div>
+      <div class="col">
+        <h3 class="ico ico1">Donec imperdiet</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet, metus ac cursus auctor, arcu felis ornare dui.</p>
+        <p class="more"><a href="#" class="bul">Lorem ipsum</a></p>
+      </div>
+      <div class="col">
+        <h3 class="ico ico2">Donec imperdiet</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet, metus ac cursus auctor, arcu felis ornare dui.</p>
+        <p class="more"><a href="#" class="bul">Lorem ipsum</a></p>
+      </div>
+      <div class="col">
+        <h3 class="ico ico3">Donec imperdiet</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet, metus ac cursus auctor, arcu felis ornare dui.</p>
+        <p class="more"><a href="#" class="bul">Lorem ipsum</a></p>
+      </div>
+      <div class="col col-last">
+        <h3 class="ico ico4">Donec imperdiet</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet, metus ac cursus auctor, arcu felis ornare dui.</p>
+        <p class="more"><a href="#" class="bul">Lorem ipsum</a></p>
+      </div>
+      <div class="cl">&nbsp;</div>
+    </div>
+    <!-- End Text Cols -->
+  </div>
+  <!-- End Side Full -->
+  <!-- Footer -->
+  <div id="footer">
+    <p class="left"> <a href="#">Home</a> <span>|</span> <a href="#">Support</a> <span>|</span> <a href="#">My Account</a> <span>|</span> <a href="#">The Store</a> <span>|</span> <a href="#">Contact</a> </p>
+    <p class="right"> &copy; 2010 Shop Around. Design by <a href="http://chocotemplates.com">Chocotemplates.com</a> </p>
+  </div>
+  <!-- End Footer -->
+</div>
+<!-- End Shell -->
+<div id="popup" class="popup">
+        <div class="popup-content">
+            <span id="closePopup" class="close" onclick="closePopup()">&times;</span>
+            <p class="popup_title">استایل مورد نظر را انتخاب کنید...</p>
+            <figure class="popup_fig_style_first" onclick="selectstyle(this, 'خانگی')">
+                <img class="popup_image" src="{% static  'media/images/styles/casual.webp' %}">
+                <figcaption class="popup_figcaption">استایل راحتی</figcaption>
+            </figure>
+            <figure class="popup_fig_style" onclick="selectstyle(this, 'اداری')">
+                <img class="popup_image" src="{% static  'media/images/styles/formal.webp' %}">
+                <figcaption class="popup_figcaption">استایل اداری</figcaption>
+            </figure>
+            <figure class="popup_fig_style" onclick="selectstyle(this, 'مجلسی')">
+                <img class="popup_image" src="{% static  'media/images/styles/party.jpg' %}">
+                <figcaption class="popup_figcaption">استایل مجلسی</figcaption>
+            </figure>
+            <figure class="popup_fig_style" onclick="selectstyle(this, 'ورزشی')">
+                <img class="popup_image" src="{% static  'media/images/styles/sport.jpg' %}">
+                <figcaption class="popup_figcaption">استایل ورزشی</figcaption>
+            </figure>
+
+            <div class="cl">&nbsp;</div>
+        </div>
+    </div>
+
+<div id="sub_popup" >
+        <div class="popup-content">
+            <span id="sub_closePopup" class="close" onclick="sub_closePopup()">&times;</span>
+            <p id="sub_popup_title"></p>
+            <figure id="sub_popup_fig_style_first">
+                <img id="sub_popup_image">
+                <figcaption id="sub_popup_figcaption"></figcaption>
+            </figure>
+            <figure id="sub_popup_fig_style_pants">
+                <img id="sub_popup_image_pants" src="#">
+                <figcaption id="sub_popup_figcaption_pants"></figcaption>
+            </figure>
+            <figure id="sub_popup_fig_style_bags">
+                <img id="sub_popup_image_bags" src="#">
+                <figcaption id="sub_popup_figcaption_bags"></figcaption>
+            </figure>
+            <figure id="sub_popup_fig_style_shoes">
+                <img id="sub_popup_image_shoes" src="#">
+                <figcaption id="sub_popup_figcaption_shoes"></figcaption>
+            </figure>
+
+            <div class="cl">&nbsp;</div>
+        </div>
+    </div>
+</body>
+</html>
+

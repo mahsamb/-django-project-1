@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>فروشگاه پوشاک</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <link href='https://fonts.googleapis.com/css?family=Vazirmatn' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="all"/>
+    <script src="{% static 'js/jquery-1.4.1.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/jquery.jcarousel.pack.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/jquery-func.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
+    <style>
+        * { font-family: "vazirmatn", Calibri, sans-serif; }
+        .pagination { text-align: center; direction: rtl; margin: 15px 0; }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 5px 12px;
+            margin: 0 3px;
+            border: 1px solid #dedede;
+            color: #8b0000;
+            text-decoration: none;
+        }
+        .pagination .current { background: #8b0000; color: #fff; }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <div id="header">
+        <h1 id="logo" style="font-size:18px; line-height:22px; margin: 10px; text-align: center">
+            <a href="{% url 'search' %}">فروشگاه<br/>پوشاک</a>
+        </h1>
+        <div id="navigation">
+            <ul>
+                <li><a href="{% url "contact_us" %}">تماس با ما</a></li>
+                <li><a href="{% url "about_us" %}">درباره ما</a></li>
+                <li><a href="{% url "search" %}">صفحه اصلی</a></li>
+            </ul>
+        </div>
+        <div id="cart">
+            <div class="cl">&nbsp;</div>
+            <span>بازدید کل: <strong>{{ total_visits }}</strong></span>
+            <br/>
+            <span>افراد آنلاین: <strong>{{ online_count }}</strong></span>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="cl"></div>
+        <div id="content">
+            {% if query %}
+            <div style="padding:10px; border:solid 1px #dedede; text-align: right; direction: rtl; margin:3px">
+                <p>نتایج جستجو برای: <strong>{{ query }}</strong></p>
+            </div>
+            {% endif %}
+
+            <div class="products">
+                <div class="cl">&nbsp;</div>
+                {% if images_cohere_rank %}
+                <ul>
+                    {% for image, text, desc, file_name in images_cohere_rank %}
+                        {% if forloop.counter == 3 or forloop.counter == 6 or forloop.counter == 9 %}
+                        <li class="list_search last">
+                        {% else %}
+                        <li class="list_search">
+                        {% endif %}
+                            <img src="{% static 'media/' %}{{ file_name }}/{{ image }}/pic1.jpg" alt="Image"/>
+                            <div class="product-info">
+                                <div class="product-desc">
+                                    <p>{{ text }}</p>
+                                    <div class="divbutton">
+                                        <button class="details-button moreinfo_button"
+                                                data-id="{{ image }}" data-file="{{ file_name }}">
+                                            اطلاعات بیشتر
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p style="text-align:center; direction:rtl; padding:20px;">محصولی یافت نشد.</p>
+                {% endif %}
+                <div class="cl">&nbsp;</div>
+            </div>
+
+            {% if page_obj and page_obj.paginator.num_pages > 1 %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                {% endif %}
+                <span class="current">صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div id="sidebar" dir="rtl">
+            <div class="box search">
+                <h2>جستجو<span></span></h2>
+                <div class="box-content">
+                    <form action="{% url 'search' %}" method="post">
+                        {% csrf_token %}
+                        <br/>
+                        <label>نام یا توضیحات محصول:</label>
+                        <input type="text" class="field" name="query" value="{{ query|default:'' }}"/>
+                        <label>دسته‌بندی:</label>
+                        <select class="field" name="category">
+                            <option value="تیشرت" {% if selected_category == 'تیشرت' %}selected{% endif %}>تیشرت</option>
+                            <option value="شلوار" {% if selected_category == 'شلوار' %}selected{% endif %}>شلوار</option>
+                            <option value="کیف" {% if selected_category == 'کیف' %}selected{% endif %}>کیف</option>
+                            <option value="کفش" {% if selected_category == 'کفش' %}selected{% endif %}>کفش</option>
+                        </select>
+                        <button type="submit" class="search-submit">جستجو</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="cl">&nbsp;</div>
+    </div>
+</div>
+
+<div class="side-full">
+    <div class="cols">
+        <div class="cl">&nbsp;</div>
+        <div class="col">
+            <h2 class="ico ico1" style="color: #8b0000; line-height: 30px">تماس با ما</h2>
+            <p>مرضیه باباعلی<br/>ایمیل: babaalimarzieh@gmail.com &nbsp; تماس: ۰۹۹۱۸۱۸۸۴۲۵<br/><br/>
+            سمیه احمدخانی<br/>ایمیل: s_ahmadkhani91@gmail.com &nbsp; تماس: ۰۹۱۸۷۳۲۸۹۶۶<br/><br/>
+            حمیدرضا عاطفی<br/>ایمیل: h.r.atefi@gmail.com &nbsp; تماس: ۰۹۱۲۶۰۵۷۰۷۸</p>
+        </div>
+        <div class="col col-last">
+            <h2 class="ico ico1" style="color: #8b0000; line-height: 30px">درباره ما</h2>
+            <p>فروشگاه پوشاک با دسترسی مستقیم به پایگاه داده محصولات. محصولات را بر اساس دسته‌بندی مرور کنید یا با جستجوی ساده در عنوان و توضیحات، مورد دلخواه خود را پیدا کنید.</p>
+        </div>
+        <div class="cl">&nbsp;</div>
+    </div>
+</div>
+
+<div id="moreinfo_popup" class="popup box" style="display:none;">
+    <div class="popup-content">
+        <span class="close" onclick="moreinfo_closePopup()">&times;</span>
+        <br/>
+        <div id="moreinfo">
+            <div>
+                <img id="popup-image" src="" alt="Image">
+            </div>
+            <div id="text_moreinfo">
+                <p id="popup-name" class="title_fa"></p>
+                <p id="popup-attributes" class="attributes"></p>
+                <br>
+                <a style="font-weight: bold; text-decoration: underline;" id="popup-digikalapage" href="" target="_blank">لینک به دیجی کالا</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

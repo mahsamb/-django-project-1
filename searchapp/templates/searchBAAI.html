@@ -1,0 +1,241 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            font-family: "B Mitra";
+        }
+        .gallery-item {
+            display: inline-block;
+            text-align: center;
+            margin: 10px;
+        }
+        .gallery-item img {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+        }
+        .gallery-item p {
+            margin-top: 5px;
+            width: 100px;
+            height: 100px;
+            overflow: scroll;
+        }
+        .gallery-item a {
+            color: black;
+            text-decoration: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .advanced-search {
+            margin-top: 20px;
+        }
+        .advanced-search select {
+            width: 200px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        function toggleAdvancedSearch() {
+            var advancedSearch = document.getElementById('advanced-search');
+            if (advancedSearch.classList.contains('hidden')) {
+                advancedSearch.classList.remove('hidden');
+            } else {
+                advancedSearch.classList.add('hidden');
+            }
+        }
+    </script>
+</head>
+<body dir="rtl" style="margin-right: 50px">
+        <div style="margin:100px 250px">
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="text" name="query" style="width: 500px" placeholder="مشخصات تیشرت مورد نظر را وارد کنید...">
+                <button type="submit" name="search" value="normal">جستجو</button>
+                <button type="button" onclick="toggleAdvancedSearch()">جستجوی پیشرفته</button>
+
+            <div id="advanced-search" class="hidden advanced-search">
+                <select name="skin_color">
+                    <option value="0">انتخاب رنگ پوست</option>
+                    <option value="روشن">روشن</option>
+                    <option value="گندمی">گندمی</option>
+                    <option value="تیره">تیره</option>
+                    <option value="برنزه">برنزه</option>
+                    <option value="سیاه">سیاه</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select name="eye_color">قهوه ای روشن، قهوه ای تیره، عسلی، سبز، خاکستری، مشکی
+                    <option value="0">انتخاب رنگ چشم</option>
+                    <option value="مشکی">مشکی</option>
+                    <option value="قهوه‌ای روشن"> قهوه‌ای روشن</option>
+                    <option value="قهوه ای تیره">قهوه ای تیره</option>
+                    <option value="عسلی">عسلی</option>
+                    <option value="سبز"> سبز</option>
+                    <option value="خاکستری">خاکستری</option>
+
+                    <!-- Add more options as needed -->
+                </select>
+                <select name="hair_color">
+                    <option value="0">انتخاب رنگ مو</option>
+                    <option value="مشکی">مشکی</option>
+                    <option value="قهوه ای روشن"> قهوه‌ای روشن</option>
+                    <option value="قهوه ای تیره">قهوه ای تیره</option>
+                    <option value="سفید">سفید</option>
+                    <option value="بلوند">بلوند</option>
+                    <option value="خرمایی">خرمایی</option>
+                    <option value="فانتزی">فانتزی</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select name="face_shape">
+                    <option value="0">انتخاب فرم صورت</option>
+                    <option value="گرد">گرد</option>
+                    <option value="بیضی">بیضی</option>
+                    <option value="مربع">مربع</option>
+                    <option value="قلبی">قلبی</option>
+                    <option value="مستطیلی">مستطیلی</option>
+                    <option value="لوزی">لوزی</option>
+                    <option value="مثلثی">مثلثی</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <select name="body_shape">
+                    <option value="0">انتخاب نوع اندام</option>
+                    <option value="ساعت شنی">ساعت شنی</option>
+                    <option value="گلابی">گلابی</option>
+                    <option value="مستطیلی">مستطیلی</option>
+                    <option value="مثلثی">مثلثی</option>
+                    <option value="بلند">بلند</option>
+                    <option value="کوتاه">کوتاه</option>
+                    <option value="چاق">چاق</option>
+                    <option value="لاغر">لاغر</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <button type="submit" name="search" value="advanced">جستجو</button>
+            </div>
+            </form>
+
+        </div>
+{#        {% if prompt1 %}#}
+{#             <p>کلید و مقادیر استخراج شده از پرس و جو: {{ prompt1 }} </p>#}
+{#        {% endif %}#}
+{#        {% if prompt2 %}#}
+{#             <p>کلید و مقادیر معادل یابی شده: {{ prompt2 }}</p>#}
+{#        {% endif %}#}
+    <div id="results">
+        {% if description_answer_llm %}
+            <p>
+                {{ description_answer_llm }}
+            </p>
+        {% endif %}
+        {% if images_elastic %}
+            <h3>Elastic</h3>
+            <div>
+                {% for image, text in images_elastic %}
+                    <div class="gallery-item">
+                        <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                        <button>ست های پیشنهادی</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+         {% if images %}
+            <h3></h3>
+            <div>
+                {% for image, text, ul in images %}
+                    <div class="gallery-item">
+                        <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                        <button><a href="{% url 'recomendation_page' image %}">ست های پیشنهادی</a></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_cohere %}
+            <h3>Cohere</h3>
+            <div>
+                {% for image, text in images_cohere %}
+                    <div class="gallery-item">
+                        <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_baai %}
+            <h3>Bge</h3>
+            <div>
+                {% for image, text in images_baai %}
+                    <div class="gallery-item">
+                        <img src="{% static image %}" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_small %}
+            <h3>Small</h3>
+            <div>
+                {% for image, text in images_small %}
+                    <div class="gallery-item">
+                        <img src="{% static image %}" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_large %}
+            <h3>Large</h3>
+            <div>
+                {% for image, text in images_large %}
+                    <div class="gallery-item">
+                        <img src="{% static image %}" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if images_cohere_rank %}
+            <h3>Cohere Rerank</h3>
+            <div>
+                {% for image, text, ul in images_cohere_rank %}
+                    <div class="gallery-item">
+                        <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                        <button><a href="{% url 'recomendation_page' image %}">ست های پیشنهادی</a></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_jina_rank %}
+            <h3>jina Rerank</h3>
+            <div>
+                {% for image, text, ul in images_jina_rank %}
+                    <div class="gallery-item">
+                        <img src="{% static 'media/images/' %}{{image}}/pic1.jpg" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                        <button><a href="{% url 'recomendation_page' image %}">ست های پیشنهادی</a></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if images_borda_rank %}
+            <h3>borda rerank</h3>
+            <div>
+                {% for image,text in images_borda_rank %}
+                    <div class="gallery-item">
+                        <img src="{% static image %}" alt="Image" style="width: 100px; height: 100px;"/>
+                        <p>{{ text }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+/venv
+/.cloud/
+.cloud/
+/.cloud
+.idea/
+__pycache__/
+*.pyc
+db.sqlite3
+postgres_data/
+postgres.log
+*.zip
+searchapp/desktop.ini
